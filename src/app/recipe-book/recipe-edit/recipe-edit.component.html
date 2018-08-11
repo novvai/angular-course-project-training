@@ -1,0 +1,64 @@
+<div class="row">
+  <div class="col-xs-12">
+    <h3>Create you own recipe!</h3>
+    <hr>
+    <form [formGroup]="recipeForm" (ngSubmit)="onRecipeSubmit()">
+      <div class="row">
+        <div class="col-xs-12 text-right">
+          <div class="btn-group">
+            <input type="submit" value="Save" class="btn btn-success" [disabled]="!recipeForm.valid">
+            <input type="button" value="Cance" class="btn btn-primary" (click)="cancelEditing()">
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="title"> Title: </label>
+            <input type="text" id="title" formControlName='title' class="form-control">
+            <div class="help-block" *ngIf="!recipeForm.get('title').valid && recipeForm.get('title').touched">
+              <p class="alert alert-danger"> Title is required! </p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="imageUrl"> Image Url: </label>
+            <input type="text" id="imageUrl" formControlName='imageUrl' class="form-control">
+            <div class="help-block" *ngIf="!recipeForm.get('imageUrl').valid && recipeForm.get('imageUrl').touched">
+              <p class="alert alert-danger">Image is required!</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description"> Description :</label>
+            <textarea name="description" id="description" rows=3 class="form-control" formControlName='description'></textarea>
+            <div class="help-block" *ngIf="!recipeForm.get('description').valid && recipeForm.get('description').touched">
+                <p class="alert alert-danger">Please enter some kind of description!</p>
+              </div>
+          </div>
+          <div formArrayName="ingredients">
+            <div class="form-group">
+              <h5>
+                Ingredients
+                <input type="button" class="btn" value="+" (click)="addIngredient()">
+              </h5>
+            </div>
+            <div class="form-group" *ngFor="let ingredient of recipeForm.get('ingredients').controls; let i = index">
+              <div class="row" [formArrayName]="i">
+
+                <div class="col-xs-1">
+                  <a class="btn btn-danger" (click)="deleteIngredientAt(i)">x</a>
+                </div>
+                <div class="col-xs-5">
+                  <input type="text" class="form-control" formControlName="name">
+                </div>
+                <div class="col-xs-2">
+                  <input type="number" class="form-control" formControlName="amount">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
