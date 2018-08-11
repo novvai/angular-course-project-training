@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { DataStorageService } from '../../common/data-storage.service';
-import { AuthService } from '../../common/auth.service';
+import { Observable } from 'rxjs';
+import { AuthState } from '../../auth/auth.reducers';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../app.reducers';
+import * as AuthActions from '../../auth/auth.actions';
 
 @Component({
   selector: 'app-header-navigation',
@@ -8,10 +12,12 @@ import { AuthService } from '../../common/auth.service';
   styleUrls: ['./header-navigation.component.css']
 })
 export class HeaderNavigationComponent implements OnInit {
+  authenticationState: Observable<AuthState>
   ngOnInit() {
+    this.authenticationState = this.store.select('auth');
   }
 
-  constructor(private dbService: DataStorageService, public auth: AuthService) {
+  constructor(private dbService: DataStorageService,private store: Store<AppState>) {
 
   }
 
@@ -20,9 +26,9 @@ export class HeaderNavigationComponent implements OnInit {
   }
   onFetchRecipes() {
     this.dbService.fetchRecipes();
-  }
+  } 
 
   onLogout() {
-    this.auth.logout()
+    this.store.dispatch(new AuthActions.SignOut());
   }
 }

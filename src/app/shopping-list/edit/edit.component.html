@@ -19,7 +19,7 @@
           <button type='submit' class="btn-success btn" [disabled]="!shoplistItemForm.valid">
               {{buttonMode}}
           </button>
-          <button type="button" class="btn-danger btn" (click)="onDelete()" [disabled]="itemId===undefined">Delete</button>
+          <button type="button" class="btn-danger btn" (click)="onDelete()" [disabled]="editedIngredient===undefined">Delete</button>
           <button type="button" class="btn-warning btn" (click)="clearFormInputs()">Clear</button>
         </div>
       </div>

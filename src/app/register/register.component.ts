@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthService } from '../common/auth.service';
+import { AppState } from '../app.reducers';
+import { Store } from '@ngrx/store';
+import * as AuthActions from "../auth/auth.actions";
 
 @Component({
   selector: 'app-register',
@@ -10,16 +12,17 @@ import { AuthService } from '../common/auth.service';
 export class RegisterComponent implements OnInit {
 
   @ViewChild("signUpForm") signUpForm: NgForm;
-  constructor(private authentication: AuthService) { }
+  constructor(private store: Store<AppState>) { }
 
   ngOnInit() {
 
   }
   createAccount() {
 
-    const email = this.signUpForm.value.email,
-      password = this.signUpForm.value.password;
-      console.log(email,password);
-      this.authentication.signUp(email, password);
+    const user = {
+      email: this.signUpForm.value.email,
+      pass: this.signUpForm.value.password
+    };
+    this.store.dispatch(new AuthActions.TrySignUp(user));
   }
 }
