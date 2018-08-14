@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 
 import * as firebase from 'firebase';
 import * as AuthActions from "./auth.actions";
-import { map, switchMap, mergeMap, tap } from "rxjs/operators";
+import { map, switchMap, mergeMap, tap, catchError } from "rxjs/operators";
 import { from } from "rxjs";
 import { Router } from "@angular/router";
 
@@ -34,7 +34,9 @@ export class AuthEffects {
                         }
                     ]
                 }
-            )
+            ), catchError((err, caught) => {
+                return caught;
+            })
         );
     @Effect()
     authSignin = this.actions$.ofType(AuthActions.TRY_SIGN_IN).pipe(
@@ -42,11 +44,9 @@ export class AuthEffects {
             return auth.payload;
         }),
         switchMap((auth: { email: string, pass: string }) => {
-            console.log(auth);
             return from(firebase.auth().signInWithEmailAndPassword(auth.email, auth.pass));
         }),
         switchMap((c) => {
-            // console.log(c);
             return from(firebase.auth().currentUser.getIdToken());
         }),
         mergeMap((token: string) => {
@@ -59,6 +59,8 @@ export class AuthEffects {
                 payload: token
             }
             ]
+        }), catchError((err, caught) => {
+            return caught;
         })
     );
     @Effect({ dispatch: false })

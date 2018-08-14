@@ -42,7 +42,7 @@
                 <input type="button" class="btn" value="+" (click)="addIngredient()">
               </h5>
             </div>
-            <div class="form-group" *ngFor="let ingredient of recipeForm.get('ingredients').controls; let i = index">
+            <div class="form-group" *ngFor="let ingredient of recipeForm.get('ingredients')['controls']; let i = index">
               <div class="row" [formArrayName]="i">
 
                 <div class="col-xs-1">

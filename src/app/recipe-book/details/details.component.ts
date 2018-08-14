@@ -1,10 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as ShoppingListActions from "../../shopping-list/store/shoppin-list.actions"
-import { AppState } from '../../app.reducers';
+import * as RecipeActions from "../store/recipes.actions"
+import { Observable } from 'rxjs';
+import { RecipesState } from '../store/recipes.state';
+import { take } from 'rxjs/operators';
+import { FeatureState } from '../store/recipes.reducers';
 
 @Component({
   selector: 'app-details',
@@ -13,14 +16,13 @@ import { AppState } from '../../app.reducers';
 })
 export class DetailsComponent implements OnInit {
 
-  public recipe: Recipe;
-  private recipeId:number;
+  public recipesState: Observable<RecipesState>;
+  public recipeId: number;
 
   constructor(
-    private recipeService: RecipeService,
     private router: ActivatedRoute,
     private nexRoute: Router,
-    private store:Store<AppState>
+    private store: Store<FeatureState>
   ) { }
 
   ngOnInit() {
@@ -28,21 +30,21 @@ export class DetailsComponent implements OnInit {
       params: Params
     ) => {
       this.recipeId = parseInt(params['id']);
-      this.recipe = this.recipeService.getRecipe(this.recipeId);
+      this.recipesState = this.store.select('recipesBook');
     });
   }
 
-  deleteRecipe(){
-    this.recipeService.delete(this.recipeId).then(
-      ()=>{
-        this.nexRoute.navigate(['/recipes']);
-      }
-    );
-
+  deleteRecipe() {
+    this.store.dispatch(new RecipeActions.DeleteRecipes(this.recipeId));
+    this.nexRoute.navigate(['/recipes']);
   }
 
   addToShoppingList() {
-    this.store.dispatch(new ShoppingListActions.AddIngredients(this.recipe.ingredients));
+    this.store.select('recipesBook').pipe(take(1)).subscribe(
+      (recipeState: RecipesState) => {
+        this.store.dispatch(new ShoppingListActions.AddIngredients(recipeState.recipes[this.recipeId].ingredients));
+      }
+    );
   }
 
 }

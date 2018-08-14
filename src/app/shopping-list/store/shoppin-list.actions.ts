@@ -15,17 +15,12 @@ export class AddIngredient implements Action {
 
 export class AddIngredients implements Action {
     readonly type: string = ADD_INGREDIENTS;
-    constructor(public payload: Ingredient[]) { console.log('state') }
+    constructor(public payload: Ingredient[]) { }
 }
 
 export class UpdateIngredient implements Action {
     readonly type: string = UPDATE_INGREDIENT;
     constructor(public payload: Ingredient ) {
-    }
-    getPayload(){
-        
-
-        return this.payload;
     }
 }
 

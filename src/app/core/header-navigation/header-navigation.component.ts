@@ -5,6 +5,7 @@ import { AuthState } from '../../auth/auth.reducers';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../app.reducers';
 import * as AuthActions from '../../auth/auth.actions';
+import * as RecipesBook from "../../recipe-book/store/recipes.actions"
 
 @Component({
   selector: 'app-header-navigation',
@@ -22,10 +23,10 @@ export class HeaderNavigationComponent implements OnInit {
   }
 
   onSaveRecipes() {
-    this.dbService.saveRecipes();
+    this.store.dispatch(new RecipesBook.SaveRecipes());
   }
   onFetchRecipes() {
-    this.dbService.fetchRecipes();
+    this.store.dispatch(new RecipesBook.FetchRecipes());
   } 
 
   onLogout() {

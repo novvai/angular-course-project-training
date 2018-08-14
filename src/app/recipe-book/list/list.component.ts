@@ -1,34 +1,26 @@
-import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { Recipe } from '../recipe.model';
-import { RecipeService } from '../recipe.service';
-import { Subscription } from 'rxjs';
-import { DataStorageService } from '../../common/data-storage.service';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { RecipesState } from '../store/recipes.state';
+import * as RecipesBook from "../store/recipes.actions"
+import { FeatureState } from '../store/recipes.reducers';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.css']
 })
-export class ListComponent implements OnInit, OnDestroy {
-  ngOnDestroy(): void {
-    try{
-      this.recipesUpdatingSub.unsubscribe();
-    } catch(e){
-      console.log(e)
-    }
-  }
-  recipes: Array<Recipe> = [];
-  recipesUpdatingSub: Subscription;
+export class ListComponent implements OnInit {
 
-  constructor(private recipesService: RecipeService, private dbService: DataStorageService) { }
+  recipesState: Observable<RecipesState>;
+
+  constructor(
+    private store: Store<FeatureState>
+  ) { }
 
   ngOnInit() {
-    // this.recipes = this.recipesService.getRecipes();
-    this.dbService.fetchRecipes();
-    this.recipesUpdatingSub = this.recipesService.recipeListUpdate.subscribe((items: Array<Recipe>) => {
-      this.recipes = items;
-    });
+    this.store.dispatch(new RecipesBook.FetchRecipes());
+
+    this.recipesState = this.store.select('recipesBook');
   }
-
-
 }
